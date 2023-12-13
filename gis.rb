@@ -13,7 +13,7 @@ class Track
     end
   end
 
-  def get_track_json()
+  def get_json()
     j = '{'
     j += '"type": "Feature", '
     if @name != nil
@@ -80,7 +80,7 @@ class Waypoint
     @type = type
   end
 
-  def get_waypoint_json(indent=0)
+  def get_json(indent=0)
     j = '{"type": "Feature",'
     # if name is not nil or type is not nil
     j += '"geometry": {"type": "Point","coordinates": '
@@ -127,11 +127,7 @@ class World
         s +=","
       end
 	  
-      if f.class == Track
-        s += f.get_track_json
-      elsif f.class == Waypoint
-        s += f.get_waypoint_json
-      end
+	  f.get_json
     end
 	
     s + "]}"

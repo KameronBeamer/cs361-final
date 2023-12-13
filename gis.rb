@@ -75,23 +75,29 @@ class Waypoint
     # if name is not nil or type is not nil
     j += '"geometry": {"type": "Point","coordinates": '
     j += "[#{@lon},#{@lat}"
+    
     if ele != nil
       j += ",#{@ele}"
     end
+    
     j += ']},'
-    if name != nil or type != nil
+	
+	if name != nil
       j += '"properties": {'
-      if name != nil
-        j += '"title": "' + @name + '"'
-      end
-      if type != nil  # if type is not nil
-        if name != nil
-          j += ','
-        end
-        j += '"icon": "' + @type + '"'  # type is the icon
-      end
-      j += '}'
+      j += '"title": "' + @name + '"'
     end
+	
+	if type != nil
+	  if name != nil
+	    j += ','
+	  end
+      j += '"icon": "' + @type + '"'  # type is the icon
+    end
+	
+    if name != nil or type != nil
+      j += '}'
+	end
+    
     j += "}"
     return j
   end
@@ -116,10 +122,10 @@ class World
       if i != 0
         s +=","
       end
-	  
+      	  
       s += f.get_json
     end
-	
+    
     s + "]}"
   end
 end

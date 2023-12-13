@@ -3,12 +3,14 @@
 class Track
   def initialize(segments, name=nil)
     @name = name
-    segment_objects = []
+    @segments = []
+	initialize_segment_objects(segments)
+  end
+  
+  def initialize_segment_objects(segments)
     segments.each do |s|
-      segment_objects.append(TrackSegment.new(s))
+      @segments.append(TrackSegment.new(s))
     end
-    # set segments to segment_objects
-    @segments = segment_objects
   end
 
   def get_track_json()
@@ -47,31 +49,29 @@ class Track
     end
     j + ']}}'
   end
+  
 end
+
 class TrackSegment
   attr_reader :coordinates
   def initialize(coordinates)
     @coordinates = coordinates
   end
+  
 end
 
 class Point
-
   attr_reader :lat, :lon, :ele
-
   def initialize(lon, lat, ele=nil)
     @lon = lon
     @lat = lat
     @ele = ele
   end
+  
 end
 
 class Waypoint
-
-
-
-attr_reader :lat, :lon, :ele, :name, :type
-
+  attr_reader :lat, :lon, :ele, :name, :type
   def initialize(lon, lat, ele=nil, name=nil, type=nil)
     @lat = lat
     @lon = lon
@@ -105,13 +105,15 @@ attr_reader :lat, :lon, :ele, :name, :type
     j += "}"
     return j
   end
+  
 end
 
 class World
-def initialize(name, things)
-  @name = name
-  @features = things
-end
+  def initialize(name, things)
+    @name = name
+    @features = things
+  end
+  
   def add_feature(f)
     @features.append(t)
   end
@@ -128,9 +130,12 @@ end
         elsif f.class == Waypoint
             s += f.get_waypoint_json
       end
+	  
     end
+	
     s + "]}"
   end
+  
 end
 
 def main()

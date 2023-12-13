@@ -1,10 +1,11 @@
 #!/usr/bin/env ruby
 
 class Track
-  def initialize(segments, name=nil)
-    @name = name
+  attr_reader :segments, :name
+  def initialize(args)
+    @name = args[:name] || nil
     @segments = []
-	insert_segment_objects(segments)
+	insert_segment_objects(args[:segments])
   end
   
   def insert_segment_objects(segments)
@@ -19,30 +20,36 @@ class Track
     if @name != nil
       j+= '"properties": {"title": "' + @name + '"},'
     end
+	
     j += '"geometry": {"type": "MultiLineString","coordinates": ['
+	
     # Loop through all the segment objects
     @segments.each_with_index do |s, index|
       if index > 0
         j += ","
       end
       j += '['
+	  
       # Loop through all the coordinates in the segment
       tsj = ''
       s.coordinates.each do |c|
         if tsj != ''
           tsj += ','
         end
+		
         # Add the coordinate
         tsj += '['
         tsj += "#{c.lon},#{c.lat}"
         if c.ele != nil
           tsj += ",#{c.ele}"
         end
+		
         tsj += ']'
       end
-      j+=tsj
-      j+=']'
+	  
+      j+= tsj + ']'
     end
+	
     j + ']}}'
   end
   
@@ -58,12 +65,12 @@ end
 
 class Waypoint
   attr_reader :lat, :lon, :ele, :name, :type
-  def initialize(lon, lat, ele=nil, name=nil, type=nil)
-    @lat = lat
-    @lon = lon
-    @ele = ele
-    @name = name
-    @type = type
+  def initialize(args)
+    @lat = args[:lat]
+    @lon = args[:lon]
+    @ele = args[:ele] || nil
+    @name = args[:name] || nil
+    @type = args[:type] || nil
   end
 
   def get_json(indent=0)
@@ -100,9 +107,10 @@ class Waypoint
 end
 
 class World
-  def initialize(name, features)
-    @name = name
-    @features = features
+  attr_reader :name, :features
+  def initialize(args)
+    @name = args[:name]
+    @features = args[:features]
   end
   
   def add_feature(f)
@@ -126,17 +134,32 @@ class World
 end
 
 def main()
-  waypoint1 = Waypoint.new(-121.5, 45.5, 30, "home", "flag")
-  waypoint2 = Waypoint.new(-121.5, 45.6, nil, "store", "dot")
+  waypoint1 = Waypoint.new(:lat => -121.5, :lon => 45.5, :ele => 30,
+    :name => "home", :type => "flag")
+  waypoint2 = Waypoint.new(:lat => -121.5, :lon => 45.6,
+    :name => "store", :type => "dot")
   
-  segment1 = [Waypoint.new(-122, 45), Waypoint.new(-122, 46), Waypoint.new(-121, 46)]
-  segment2 = [Waypoint.new(-121, 45), Waypoint.new(-121, 46)]
-  segment3 = [Waypoint.new(-121, 45.5), Waypoint.new(-122, 45.5)]
+  segment1 = [
+    Waypoint.new(:lat => -122, :lon => 45), 
+	Waypoint.new(:lat => -122, :lon => 46), 
+	Waypoint.new(:lat => -121, :lon => 46)
+  ]
+  segment2 = [
+    Waypoint.new(:lat => -121, :lon => 45), 
+	Waypoint.new(:lat => -121, :lon => 46)
+  ]
+  segment3 = [
+    Waypoint.new(:lat => -121, :lon => 45.5), 
+	Waypoint.new(:lat => -122, :lon => 45.5)
+  ]
 
-  track1 = Track.new([segment1, segment2], "track 1")
-  track2 = Track.new([segment3], "track 2")
+  track1 = Track.new(:segments => [segment1, segment2], :name => "track 1")
+  track2 = Track.new(:segments => [segment3], :name => "track 2")
 
-  world = World.new("My Data", [waypoint1, waypoint2, track1, track2])
+  world = World.new(
+    :name => "My Data",
+    :features => [waypoint1, waypoint2, track1, track2]
+  )
 
   puts world.to_geo_json()
 end

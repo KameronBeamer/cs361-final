@@ -60,16 +60,6 @@ class TrackSegment
   
 end
 
-class Point
-  attr_reader :lat, :lon, :ele
-  def initialize(lon, lat, ele=nil)
-    @lon = lon
-    @lat = lat
-    @ele = ele
-  end
-  
-end
-
 class Waypoint
   attr_reader :lat, :lon, :ele, :name, :type
   def initialize(lon, lat, ele=nil, name=nil, type=nil)
@@ -118,7 +108,7 @@ class World
     @features.append(t)
   end
 
-  def to_geojson(indent=0)
+  def to_geo_json(indent=0)
     # Write stuff
     s = '{"type": "FeatureCollection","features": ['
 	
@@ -127,7 +117,7 @@ class World
         s +=","
       end
 	  
-	  f.get_json
+      s += f.get_json
     end
 	
     s + "]}"
@@ -138,16 +128,16 @@ def main()
   waypoint1 = Waypoint.new(-121.5, 45.5, 30, "home", "flag")
   waypoint2 = Waypoint.new(-121.5, 45.6, nil, "store", "dot")
   
-  segment1 = [Point.new(-122, 45), Point.new(-122, 46), Point.new(-121, 46)]
-  segment2 = [Point.new(-121, 45), Point.new(-121, 46)]
-  segment3 = [Point.new(-121, 45.5), Point.new(-122, 45.5)]
+  segment1 = [Waypoint.new(-122, 45), Waypoint.new(-122, 46), Waypoint.new(-121, 46)]
+  segment2 = [Waypoint.new(-121, 45), Waypoint.new(-121, 46)]
+  segment3 = [Waypoint.new(-121, 45.5), Waypoint.new(-122, 45.5)]
 
   track1 = Track.new([segment1, segment2], "track 1")
   track2 = Track.new([segment3], "track 2")
 
   world = World.new("My Data", [waypoint1, waypoint2, track1, track2])
 
-  puts world.to_geojson()
+  puts world.to_geo_json()
 end
 
 if File.identical?(__FILE__, $0)

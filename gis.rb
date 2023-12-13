@@ -4,10 +4,10 @@ class Track
   def initialize(segments, name=nil)
     @name = name
     @segments = []
-	initialize_segment_objects(segments)
+	insert_segment_objects(segments)
   end
   
-  def initialize_segment_objects(segments)
+  def insert_segment_objects(segments)
     segments.each do |s|
       @segments.append(TrackSegment.new(s))
     end
@@ -139,25 +139,17 @@ class World
 end
 
 def main()
-  w = Waypoint.new(-121.5, 45.5, 30, "home", "flag")
-  w2 = Waypoint.new(-121.5, 45.6, nil, "store", "dot")
-  ts1 = [
-  Point.new(-122, 45),
-  Point.new(-122, 46),
-  Point.new(-121, 46),
-  ]
+  waypoint1 = Waypoint.new(-121.5, 45.5, 30, "home", "flag")
+  waypoint2 = Waypoint.new(-121.5, 45.6, nil, "store", "dot")
+  
+  segment1 = [Point.new(-122, 45), Point.new(-122, 46), Point.new(-121, 46)]
+  segment2 = [Point.new(-121, 45), Point.new(-121, 46)]
+  segment3 = [Point.new(-121, 45.5), Point.new(-122, 45.5)]
 
-  ts2 = [ Point.new(-121, 45), Point.new(-121, 46), ]
+  track1 = Track.new([segment1, segment2], "track 1")
+  track2 = Track.new([segment3], "track 2")
 
-  ts3 = [
-    Point.new(-121, 45.5),
-    Point.new(-122, 45.5),
-  ]
-
-  t = Track.new([ts1, ts2], "track 1")
-  t2 = Track.new([ts3], "track 2")
-
-  world = World.new("My Data", [w, w2, t, t2])
+  world = World.new("My Data", [waypoint1, waypoint2, track1, track2])
 
   puts world.to_geojson()
 end

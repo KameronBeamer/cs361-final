@@ -14,16 +14,12 @@ class Track
   end
 
   def get_json()
-    j = '{'
-    j += '"type": "Feature", '
+    j = '{"type": "Feature", '
+	
     if @name != nil
-      j+= '"properties": {'
-      j += '"title": "' + @name + '"'
-      j += '},'
+      j+= '"properties": {"title": "' + @name + '"},'
     end
-    j += '"geometry": {'
-    j += '"type": "MultiLineString",'
-    j +='"coordinates": ['
+    j += '"geometry": {"type": "MultiLineString","coordinates": ['
     # Loop through all the segment objects
     @segments.each_with_index do |s, index|
       if index > 0
@@ -71,9 +67,8 @@ class Waypoint
   end
 
   def get_json(indent=0)
-    j = '{"type": "Feature",'
+    j = '{"type": "Feature","geometry": {"type": "Point","coordinates": '
     # if name is not nil or type is not nil
-    j += '"geometry": {"type": "Point","coordinates": '
     j += "[#{@lon},#{@lat}"
     
     if ele != nil
@@ -83,8 +78,7 @@ class Waypoint
     j += ']},'
 	
 	if name != nil
-      j += '"properties": {'
-      j += '"title": "' + @name + '"'
+      j += '"properties": {"title": "' + @name + '"'
     end
 	
 	if type != nil
@@ -99,6 +93,7 @@ class Waypoint
 	end
     
     j += "}"
+	
     return j
   end
   
